@@ -41,13 +41,13 @@ export default defineConfig({
     {
       name: 'desktop-chrome',
       use: { ...devices['Desktop Chrome'] },
-      testIgnore: /authenticated/,
+      testIgnore: [/authenticated/, /mobile/],
     },
-    // {
-    //   name: 'mobile-chrome',
-    //   use: { ...devices['Pixel 7'] },
-    //   testIgnore: /authenticated/,
-    // },
+    {
+      name: 'mobile-chrome',
+      use: { ...devices['Pixel 7'] },
+      testMatch: /mobile.*\.spec\.ts/,
+    },
     {
       // Logs in once (skips itself cleanly if no credentials are set) and
       // writes playwright/.auth/user.json for the authenticated project below.

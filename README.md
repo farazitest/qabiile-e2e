@@ -5,6 +5,14 @@ Senior SQA Engineer practical assessment at Mediusware.
 
 **Stack:** Playwright + TypeScript (as preferred by the assessment brief).
 
+> 📘 **Complete Assessment Deliverables Document:** See [DELIVERABLES.md](file:///c:/Users/MW/Downloads/qabiile-e2e/qabiile-e2e/DELIVERABLES.md) for the full Journey Map, Top 3 Product Risks, 12 complete written test cases with all required fields, Gherkin specifications, and automation rationale.
+
+## Deliverables Index
+- [Deliverable 1: Journey Map & Risk Ranking](file:///c:/Users/MW/Downloads/qabiile-e2e/qabiile-e2e/docs/DELIVERABLE-1-JOURNEY-MAP-AND-RISKS.md)
+- [Deliverable 2: Complete E2E Test Suite Specification](file:///c:/Users/MW/Downloads/qabiile-e2e/qabiile-e2e/docs/DELIVERABLE-2-TEST-SUITE.md)
+- [Deliverable 2: QAB-E2E-010 Dual Register (Gherkin + Table)](file:///c:/Users/MW/Downloads/qabiile-e2e/qabiile-e2e/docs/QAB-E2E-010.md)
+- [Master Deliverables Document](file:///c:/Users/MW/Downloads/qabiile-e2e/qabiile-e2e/DELIVERABLES.md)
+
 ## Why these specs
 
 Most of the suite targets the part of the product reachable without

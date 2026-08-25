@@ -21,12 +21,18 @@ export class SignInPage {
   }
 
   async goto() {
-    await this.page.goto('/sign-in', { waitUntil: 'domcontentloaded' });
+    await this.page.goto('/sign-in');
+    await this.page.waitForLoadState('domcontentloaded');
+    await this.emailInput.waitFor({ state: 'visible' });
   }
 
   async submit(email: string, password: string) {
+    await this.page.waitForLoadState('networkidle').catch(() => { });
+    await this.emailInput.waitFor({ state: 'visible' });
     await this.emailInput.fill(email);
     await this.passwordInput.fill(password);
+    // Allow React form state to sync before submitting
+    await this.page.waitForTimeout(300);
     await this.loginButton.click();
   }
 

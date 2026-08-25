@@ -17,11 +17,16 @@ export class RequestAccessPage {
   }
 
   async goto() {
-    await this.page.goto('/request-access', { waitUntil: 'domcontentloaded' });
+    await this.page.goto('/request-access');
+    await this.page.waitForLoadState('domcontentloaded');
+    await this.emailInput.waitFor({ state: 'visible' });
   }
 
   async submit(email: string) {
+    await this.page.waitForLoadState('networkidle').catch(() => { });
+    await this.emailInput.waitFor({ state: 'visible' });
     await this.emailInput.fill(email);
+    await this.page.waitForTimeout(300);
     await this.requestAccessButton.click();
   }
 }
