@@ -6,10 +6,12 @@
     "test": "playwright test",
     "test:headed": "playwright test --headed",
     "test:mobile": "playwright test --project=mobile-chrome",
+    "test:authenticated": "playwright test --project=authenticated-chrome",
     "report": "playwright show-report"
   },
   "devDependencies": {
     "@playwright/test": "^1.48.0",
+    "dotenv": "^16.4.5",
     "typescript": "^5.5.0"
   }
 }
