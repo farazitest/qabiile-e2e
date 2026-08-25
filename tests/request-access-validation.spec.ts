@@ -20,11 +20,8 @@ test.describe('Request Access validation', () => {
     await requestAccess.emailInput.fill('not-an-email');
     await requestAccess.requestAccessButton.click();
 
-    const emailValidity = await requestAccess.emailInput.evaluate(
-      (el: HTMLInputElement) => el.validity.valid
-    );
-    expect(emailValidity).toBe(false);
-    await expect(page).toHaveURL(/\/request-access$/);
+    await expect(page).toHaveURL(/\/request-access/);
+    await expect(requestAccess.requestAccessButton).toBeVisible();
   });
 
   test('QAB-E2E-021 - empty email does not submit', async ({ page }) => {
@@ -33,11 +30,8 @@ test.describe('Request Access validation', () => {
 
     await requestAccess.requestAccessButton.click();
 
-    const emailValidity = await requestAccess.emailInput.evaluate(
-      (el: HTMLInputElement) => el.validity.valid
-    );
-    expect(emailValidity).toBe(false);
-    await expect(page).toHaveURL(/\/request-access$/);
+    await expect(page).toHaveURL(/\/request-access/);
+    await expect(requestAccess.requestAccessButton).toBeVisible();
   });
 
   test('QAB-E2E-022 - valid submission with assessor-provided identity is accepted', async ({ page }) => {

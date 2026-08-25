@@ -1,5 +1,7 @@
 import { test as setup, expect } from '@playwright/test';
 import { SignInPage } from '../pages/SignInPage';
+import fs from 'fs';
+import path from 'path';
 
 /**
  * QAB-E2E-013 - Sign in with the provided real test account succeeds.
@@ -15,9 +17,14 @@ import { SignInPage } from '../pages/SignInPage';
  * .env file (see .env.example) - never hardcoded here and never committed.
  */
 
-const authFile = 'playwright/.auth/user.json';
+const authDir = path.resolve('playwright/.auth');
+const authFile = path.join(authDir, 'user.json');
 
 setup('authenticate (QAB-E2E-013)', async ({ page }) => {
+  if (!fs.existsSync(authDir)) {
+    fs.mkdirSync(authDir, { recursive: true });
+  }
+
   const env = (globalThis as typeof globalThis & {
     process?: { env?: Record<string, string | undefined> };
   }).process?.env;
@@ -25,6 +32,7 @@ setup('authenticate (QAB-E2E-013)', async ({ page }) => {
   const password = env?.AUTH_PASSWORD;
 
   if (!email || !password) {
+    fs.writeFileSync(authFile, JSON.stringify({ cookies: [], origins: [] }));
     setup.skip(
       true,
       'AUTH_EMAIL / AUTH_PASSWORD not set. Copy .env.example to .env and fill ' +

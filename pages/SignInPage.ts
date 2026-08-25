@@ -13,15 +13,15 @@ export class SignInPage {
   constructor(page: Page) {
     this.page = page;
     this.nav = new NavBar(page);
-    this.emailInput = page.getByPlaceholder('Enter your email address');
-    this.passwordInput = page.getByPlaceholder('Password');
-    this.loginButton = page.getByRole('button', { name: 'Login →' });
-    this.forgotPasswordLink = page.getByRole('link', { name: 'Forgot Password' });
-    this.requestAccessLink = page.getByRole('link', { name: 'Request Access' });
+    this.emailInput = page.locator('input[name="email"]').or(page.getByPlaceholder(/email/i));
+    this.passwordInput = page.locator('input[name="password"]').or(page.getByPlaceholder(/password/i));
+    this.loginButton = page.getByRole('button', { name: /login/i });
+    this.forgotPasswordLink = page.getByRole('link', { name: /forgot password/i });
+    this.requestAccessLink = page.getByRole('link', { name: /request access/i });
   }
 
   async goto() {
-    await this.page.goto('/sign-in');
+    await this.page.goto('/sign-in', { waitUntil: 'domcontentloaded' });
   }
 
   async submit(email: string, password: string) {

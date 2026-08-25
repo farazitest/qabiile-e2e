@@ -13,9 +13,18 @@ import { test, expect } from '@playwright/test';
 
 const previouslyGatedRoutes = ['/about', '/contact'];
 
+test.beforeEach(async () => {
+  const env = (globalThis as typeof globalThis & {
+    process?: { env?: Record<string, string | undefined> };
+  }).process?.env;
+  if (!env?.AUTH_EMAIL || !env?.AUTH_PASSWORD) {
+    test.skip(true, 'AUTH_EMAIL / AUTH_PASSWORD not set in environment.');
+  }
+});
+
 for (const route of previouslyGatedRoutes) {
   test(`QAB-E2E-031 - authenticated visit to ${route} does not redirect to sign-in`, async ({ page }) => {
-    await page.goto(route);
+    await page.goto(route, { waitUntil: 'domcontentloaded' });
 
     await expect(page).not.toHaveURL(/\/sign-in/);
     // TODO on assessment day: replace with a concrete assertion on the real
@@ -25,7 +34,7 @@ for (const route of previouslyGatedRoutes) {
 }
 
 test('QAB-E2E-014 - authenticated nav no longer offers Sign In / Request to Join', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
 
   // Mirror image of NavBar.expectVisible() for the anonymous case: once
   // authenticated, the entry-points into auth should disappear (replaced

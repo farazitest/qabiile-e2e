@@ -11,13 +11,13 @@ export class RequestAccessPage {
   constructor(page: Page) {
     this.page = page;
     this.nav = new NavBar(page);
-    this.emailInput = page.getByLabel('Email address');
+    this.emailInput = page.locator('input[name="email"]').or(page.getByPlaceholder('user@email.com'));
     this.requestAccessButton = page.getByRole('button', { name: /request access/i });
     this.signInLink = page.getByRole('link', { name: 'Sign in' });
   }
 
   async goto() {
-    await this.page.goto('/request-access');
+    await this.page.goto('/request-access', { waitUntil: 'domcontentloaded' });
   }
 
   async submit(email: string) {

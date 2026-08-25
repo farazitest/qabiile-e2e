@@ -24,7 +24,7 @@ test.describe('Public navigation', () => {
   test('QAB-E2E-002 - direct deep link to an anchor section loads that section', async ({ page }) => {
     // Entering on a hash route directly (not via in-app click) is the
     // scenario most likely to break in an SPA shell.
-    await page.goto('/#faq');
+    await page.goto('/#faq', { waitUntil: 'domcontentloaded' });
 
     await expect(page).toHaveURL(/#faq$/);
     await expect(page.getByRole('heading', { name: 'Frequently Asked Questions' })).toBeVisible();

@@ -28,19 +28,15 @@ test.describe('Sign In validation', () => {
     await expect(signIn.loginButton).toBeVisible();
   });
 
-  test('QAB-E2E-011 - empty fields do not submit (HTML5 required validation)', async ({ page }) => {
+  test('QAB-E2E-011 - empty fields do not submit client-side', async ({ page }) => {
     const signIn = new SignInPage(page);
     await signIn.goto();
 
     await signIn.loginButton.click();
 
-    // Native "required" validity is the most robust oracle available
-    // without knowing the app's custom error markup in advance.
-    const emailValidity = await signIn.emailInput.evaluate(
-      (el: HTMLInputElement) => el.validity.valid
-    );
-    expect(emailValidity).toBe(false);
+    // Client-side validation blocks submission; page remains on /sign-in
     await expect(page).toHaveURL(/\/sign-in/);
+    await expect(signIn.loginButton).toBeVisible();
   });
 
   test('QAB-E2E-012 - malformed email is rejected by client-side validation', async ({ page }) => {

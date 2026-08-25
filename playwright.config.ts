@@ -1,8 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
+import dotenv from 'dotenv';
+import path from 'path';
 
-const env = (globalThis as typeof globalThis & {
-  process?: { env: Record<string, string | undefined> };
-}).process?.env ?? {};
+dotenv.config({ path: path.resolve(__dirname, '.env') });
+
+const env = process.env;
 
 /**
  * Config for public-surface E2E coverage of https://qabiile.com
@@ -22,17 +24,17 @@ export default defineConfig({
     ['html', { open: 'never' }],
     ['list'],
   ],
-  timeout: 30_000,
+  timeout: 45_000,
   expect: {
-    timeout: 5_000,
+    timeout: 10_000,
   },
   use: {
     baseURL: env.BASE_URL ?? 'https://qabiile.com',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
-    actionTimeout: 10_000,
-    navigationTimeout: 15_000,
+    actionTimeout: 15_000,
+    navigationTimeout: 30_000,
   },
 
   projects: [

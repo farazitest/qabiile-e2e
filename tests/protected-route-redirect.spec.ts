@@ -22,7 +22,7 @@ const gatedRoutes = ['/about', '/contact'];
 
 for (const route of gatedRoutes) {
   test(`QAB-E2E-030 - unauthenticated visit to ${route} redirects to sign-in with callbackUrl`, async ({ page }) => {
-    await page.goto(route);
+    await page.goto(route, { waitUntil: 'domcontentloaded' });
 
     await expect(page).toHaveURL(/\/sign-in\?callbackUrl=/);
 
