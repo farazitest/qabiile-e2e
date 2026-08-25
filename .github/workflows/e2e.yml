@@ -32,14 +32,26 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      - name: Run E2E suite
-        run: npx playwright test
+      - name: Run public E2E suite (desktop + mobile)
+        run: npx playwright test --project=desktop-chrome --project=mobile-chrome
         env:
           BASE_URL: https://qabiile.com
           # TEST_IDENTITY_EMAIL is intentionally NOT set here - the one
           # spec that performs a real form submission (QAB-E2E-022) stays
           # skipped in CI unless a maintainer explicitly wires it up as a
           # repo secret, per the rules of engagement.
+
+      - name: Run authenticated suite
+        if: ${{ secrets.AUTH_EMAIL != '' }}
+        run: npx playwright test --project=setup --project=authenticated-chrome
+        env:
+          BASE_URL: https://qabiile.com
+          # AUTH_EMAIL / AUTH_PASSWORD are NOT set by default. This step is
+          # a no-op unless a maintainer explicitly adds them as repo
+          # secrets - the authenticated suite must never run against the
+          # real test account just because someone pushed to main.
+          AUTH_EMAIL: ${{ secrets.AUTH_EMAIL }}
+          AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD }}
 
       - name: Upload Playwright report
         if: ${{ !cancelled() }}
