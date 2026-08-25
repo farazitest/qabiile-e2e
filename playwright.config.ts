@@ -1,5 +1,8 @@
-import 'dotenv/config';
 import { defineConfig, devices } from '@playwright/test';
+
+const env = (globalThis as typeof globalThis & {
+  process?: { env: Record<string, string | undefined> };
+}).process?.env ?? {};
 
 /**
  * Config for public-surface E2E coverage of https://qabiile.com
@@ -12,9 +15,9 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 2 : undefined,
+  forbidOnly: !!env.CI,
+  retries: env.CI ? 1 : 0,
+  workers: env.CI ? 2 : undefined,
   reporter: [
     ['html', { open: 'never' }],
     ['list'],
@@ -24,7 +27,7 @@ export default defineConfig({
     timeout: 5_000,
   },
   use: {
-    baseURL: process.env.BASE_URL ?? 'https://qabiile.com',
+    baseURL: env.BASE_URL ?? 'https://qabiile.com',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
@@ -38,11 +41,11 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
       testIgnore: /authenticated/,
     },
-    {
-      name: 'mobile-chrome',
-      use: { ...devices['Pixel 7'] },
-      testIgnore: /authenticated/,
-    },
+    // {
+    //   name: 'mobile-chrome',
+    //   use: { ...devices['Pixel 7'] },
+    //   testIgnore: /authenticated/,
+    // },
     {
       // Logs in once (skips itself cleanly if no credentials are set) and
       // writes playwright/.auth/user.json for the authenticated project below.

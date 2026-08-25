@@ -13,9 +13,9 @@ export class SignInPage {
   constructor(page: Page) {
     this.page = page;
     this.nav = new NavBar(page);
-    this.emailInput = page.getByLabel('Email Address');
-    this.passwordInput = page.getByLabel('Password');
-    this.loginButton = page.getByRole('button', { name: /login/i });
+    this.emailInput = page.getByPlaceholder('Enter your email address');
+    this.passwordInput = page.getByPlaceholder('Password');
+    this.loginButton = page.getByRole('button', { name: 'Login →' });
     this.forgotPasswordLink = page.getByRole('link', { name: 'Forgot Password' });
     this.requestAccessLink = page.getByRole('link', { name: 'Request Access' });
   }

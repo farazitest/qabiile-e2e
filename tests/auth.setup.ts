@@ -1,5 +1,4 @@
 import { test as setup, expect } from '@playwright/test';
-import path from 'path';
 import { SignInPage } from '../pages/SignInPage';
 
 /**
@@ -16,11 +15,14 @@ import { SignInPage } from '../pages/SignInPage';
  * .env file (see .env.example) - never hardcoded here and never committed.
  */
 
-const authFile = path.join(__dirname, '../playwright/.auth/user.json');
+const authFile = 'playwright/.auth/user.json';
 
 setup('authenticate (QAB-E2E-013)', async ({ page }) => {
-  const email = process.env.AUTH_EMAIL;
-  const password = process.env.AUTH_PASSWORD;
+  const env = (globalThis as typeof globalThis & {
+    process?: { env?: Record<string, string | undefined> };
+  }).process?.env;
+  const email = env?.AUTH_EMAIL;
+  const password = env?.AUTH_PASSWORD;
 
   if (!email || !password) {
     setup.skip(

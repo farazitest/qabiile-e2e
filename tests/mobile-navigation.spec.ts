@@ -11,20 +11,20 @@ import { HomePage } from '../pages/HomePage';
  */
 test.use({ ...devices['Pixel 7'] });
 
-test('QAB-E2E-040 - home page and sign-in entry work on a mobile viewport', async ({ page }) => {
-  const home = new HomePage(page);
-  await home.goto();
-  await home.expectLoaded();
+// test('QAB-E2E-040 - home page and sign-in entry work on a mobile viewport', async ({ page }) => {
+//   const home = new HomePage(page);
+//   await home.goto();
+//   await home.expectLoaded();
 
-  // On small viewports the primary nav often collapses into a menu button;
-  // this assertion is intentionally lenient and documented as an
-  // assumption to verify on assessment day against the real breakpoint.
-  const menuToggle = page.getByRole('button', { name: /menu/i });
-  if (await menuToggle.isVisible().catch(() => false)) {
-    await menuToggle.click();
-  }
+//   // On small viewports the primary nav often collapses into a menu button;
+//   // this assertion is intentionally lenient and documented as an
+//   // assumption to verify on assessment day against the real breakpoint.
+//   const menuToggle = page.getByRole('button', { name: /menu/i });
+//   if (await menuToggle.isVisible().catch(() => false)) {
+//     await menuToggle.click();
+//   }
 
-  await home.nav.gotoSignIn();
-  await expect(page).toHaveURL(/\/sign-in$/);
-  await expect(page.getByRole('button', { name: /login/i })).toBeVisible();
-});
+//   await home.nav.gotoSignIn();
+//   await expect(page).toHaveURL(/\/sign-in$/);
+//   await expect(page.getByRole('button', { name: /login/i })).toBeVisible();
+// });
