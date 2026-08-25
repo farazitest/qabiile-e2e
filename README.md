@@ -7,27 +7,49 @@ Senior SQA Engineer practical assessment at Mediusware.
 
 ## Why these specs
 
-There is no test account, so everything here targets the part of the product
-that's reachable without authentication: the marketing shell, Sign In,
-Request to Join, and the behavior of gated routes. Deeper journeys (missions,
-Qabi wallet, hunts, rankings) are covered on paper in the Deliverable 2 test
-suite but marked "Automatable: no - requires an authenticated account."
+Most of the suite targets the part of the product reachable without
+authentication: the marketing shell, Sign In, Request to Join, and the
+behavior of gated routes. A small set of specs (`authenticated-chrome`
+project) also cover what changes once logged in, using one real test
+account. Deeper journeys still out of reach with that single account
+(missions, Qabi wallet, hunts, Hall of Fame ranking) stay covered on paper
+in Deliverable 2, flagged `Automatable: partly` or `no` as appropriate.
 
 ## Setup
 
 ```bash
 npm install
 npx playwright install --with-deps
+cp .env.example .env   # then fill in AUTH_EMAIL / AUTH_PASSWORD locally
 ```
+
+**Credential handling — read before running the authenticated suite:**
+- `.env` is git-ignored. Never commit it, never paste the real values into a
+  commit message, PR description, or CI log.
+- The login happens exactly **once**, in `tests/auth.setup.ts`, and the
+  session is reused via `storageState` by every spec in the
+  `authenticated-chrome` project. No spec re-submits the login form.
+- If `AUTH_EMAIL`/`AUTH_PASSWORD` aren't set, `setup` and
+  `authenticated-chrome` skip cleanly — the public suite (`desktop-chrome`,
+  `mobile-chrome`) runs unaffected.
+- In CI, these are never read from a plaintext env block — only from
+  `secrets.AUTH_EMAIL` / `secrets.AUTH_PASSWORD`, and the authenticated job
+  step is skipped entirely unless those secrets are explicitly configured
+  on the repo.
 
 ## Running
 
 ```bash
-npm test                 # full suite, desktop-chrome + mobile-chrome
+npm test                     # public suite - desktop-chrome + mobile-chrome only
 npx playwright test tests/navigation.spec.ts
-npm run test:mobile      # mobile-chrome project only
-npm run report           # open the last HTML report
+npm run test:mobile          # mobile-chrome project only
+npm run test:authenticated   # runs `setup` then `authenticated-chrome` - needs .env
+npm run report                # open the last HTML report
 ```
+
+`npm test` deliberately does **not** run the authenticated project by
+default (see `testIgnore`/`testMatch` in `playwright.config.ts`) - you opt
+into it explicitly with `npm run test:authenticated` once `.env` is filled in.
 
 Runs against `https://qabiile.com` by default. Override with:
 
@@ -50,16 +72,23 @@ BASE_URL=https://staging.qabiile.com npm test
 | QAB-E2E-022 | `tests/request-access-validation.spec.ts` | Real submission - **skipped unless `TEST_IDENTITY_EMAIL` is set** |
 | QAB-E2E-030 | `tests/protected-route-redirect.spec.ts` | Unauthenticated visit to a gated route (`/about`, `/contact`) redirects to `/sign-in?callbackUrl=...` |
 | QAB-E2E-040 | `tests/mobile-navigation.spec.ts` | Home -> Sign In journey on a mobile viewport (Pixel 7) |
+| QAB-E2E-013 | `tests/auth.setup.ts` | Login with the real test account succeeds (runs once, `authenticated-chrome` only) |
+| QAB-E2E-014 | `tests/authenticated-gated-routes.spec.ts` | Authenticated nav drops Sign In / Request to Join entry points |
+| QAB-E2E-031 | `tests/authenticated-gated-routes.spec.ts` | Authenticated visit to a previously gated route (`/about`, `/contact`) no longer redirects |
 
 Full case detail (preconditions, test data, oracle, priority) lives in
 Deliverable 2 of the written test suite, not duplicated here.
 
 ## What I deliberately did not automate
 
-- **Anything behind login** - joining a qabiile, missions, Qabi wallet
-  balance, bidding in a hunt, Hall of Fame ranking. No test account exists
-  for this assessment. These are written up as manual/assumption-based
-  cases in Deliverable 2 and flagged `Automatable: no`.
+- **Deeper authenticated journeys** - joining a qabiile, missions, Qabi
+  wallet balance, bidding in a hunt, Hall of Fame ranking. The one test
+  account gives us a login and lets us re-check gated routes, but exercising
+  currency-affecting flows (earning/spending Qabi, placing a bid) with a
+  real account on a live production system is exactly what the rules of
+  engagement ask us not to do casually. These stay written up as
+  assumption-based cases in Deliverable 2, flagged `Automatable: partly` -
+  the login itself is automated, the money-moving steps are not.
 - **Real Request Access / Contact submissions in CI** - the form actually
   creates a record on a live third-party system. `QAB-E2E-022` exists but
   stays skipped unless `TEST_IDENTITY_EMAIL` is explicitly set to the exact
@@ -96,6 +125,8 @@ Deliverable 2 of the written test suite, not duplicated here.
 ```
 pages/        Page objects (NavBar, HomePage, SignInPage, RequestAccessPage)
 tests/        Specs, one file per journey area
+tests/auth.setup.ts   Logs in once, saves session for the authenticated project
+.env.example   Template for local credentials - copy to .env, never commit .env
 playwright.config.ts
 .github/workflows/e2e.yml
 ```
