@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { defineConfig, devices } from '@playwright/test';
 
 /**
@@ -35,10 +36,30 @@ export default defineConfig({
     {
       name: 'desktop-chrome',
       use: { ...devices['Desktop Chrome'] },
+      testIgnore: /authenticated/,
     },
     {
       name: 'mobile-chrome',
       use: { ...devices['Pixel 7'] },
+      testIgnore: /authenticated/,
+    },
+    {
+      // Logs in once (skips itself cleanly if no credentials are set) and
+      // writes playwright/.auth/user.json for the authenticated project below.
+      name: 'setup',
+      testMatch: /auth\.setup\.ts/,
+    },
+    {
+      // Only picks up specs that actually need a session - kept out of
+      // desktop-chrome/mobile-chrome via testIgnore above so an unauthenticated
+      // run never accidentally depends on the real account.
+      name: 'authenticated-chrome',
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: 'playwright/.auth/user.json',
+      },
+      testMatch: /authenticated.*\.spec\.ts/,
+      dependencies: ['setup'],
     },
   ],
 });
